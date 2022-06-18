@@ -1,5 +1,7 @@
 package service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import model.Interval;
@@ -13,6 +15,7 @@ public class IntervalServiceImpl implements IntervalService{
 	
 	public IntervalServiceImpl() {
 		intervalRepository = new IntervalRepository();
+		intervalRepository.addInterval(defaultIntervals().get(0));
 	}
 //	public IntervalServiceImpl(IntervalRepository intervalRepository) {
 //		this.intervalRepository=intervalRepository;
@@ -29,4 +32,14 @@ public class IntervalServiceImpl implements IntervalService{
 	        
 	        return copy;
 	    }
+	 
+	 public List<Interval> getAll() {
+	       
+	        return intervalRepository.getAllIntervals();
+	    } 
+	 private static List<Interval> defaultIntervals() {
+		    return List.of(
+		      new SimpleInterval(1L, "24/06/2014 08:22:07", "28/12/2016 12:10:14")
+		    );
+		  }
 }
