@@ -36,12 +36,18 @@ public class IntervalRepository {
 		
 	}
 	
-	public void removeInterval(Interval i) {
-		intervals.remove(i);
+	public void removeInterval(Long id) {
+	Optional<Interval> interval = getInterval(id);
+	if(interval.isEmpty()) {
+		throw new RuntimeException("Interval with id: "+ id+ " not found in database.");
+	}else {
+		intervals.remove(interval.get());
+	}
 	}
 	
 	public List<Interval> getAllIntervals(){
 		return intervals;
 	}
+
 
 }
