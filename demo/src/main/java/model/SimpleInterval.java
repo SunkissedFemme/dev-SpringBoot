@@ -1,5 +1,6 @@
 package model;
 
+/* Encapsulates data about an interval with following attributes: id, start and end. */
 public class SimpleInterval extends Interval{
 
 	public SimpleInterval(Long id, String start, String end) {

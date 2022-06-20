@@ -2,6 +2,7 @@ package model;
 
 import java.util.List;
 
+/* Wrapper class for a list of enhanced intervals. */
 public class WrapperEnhancedIntervals {
 	
 	List<EnhancedInterval> intervals;

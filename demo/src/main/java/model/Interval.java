@@ -1,5 +1,7 @@
 package model;
 
+/*Base class for creating an interval. */
+
 public abstract class Interval {
 	
 	private final Long id;

@@ -21,18 +21,17 @@ import repository.IntervalRepository;
 public class IntervalServiceImpl implements IntervalService{
 	
 	private  IntervalRepository intervalRepository;
-	private  SimpleDateFormat sdf= new SimpleDateFormat(
-            "dd/MM/yyyy HH:mm:ss");
+	private  SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	
 	public IntervalServiceImpl() {
 		intervalRepository = new IntervalRepository();
-		intervalRepository.addInterval(defaultIntervals().get(0));
+		
+		//adds default data
+		//intervalRepository.addInterval(defaultIntervals().get(0));
 	}
-//	public IntervalServiceImpl(IntervalRepository intervalRepository) {
-//		this.intervalRepository=intervalRepository;
-//	}
 
 	
+	@Override
 	 public Interval create(SimpleInterval interval) {
 		 Interval copy = new SimpleInterval(
 	                interval.getId(),
@@ -42,60 +41,87 @@ public class IntervalServiceImpl implements IntervalService{
 	        intervalRepository.addInterval(copy);
 	        
 	        return copy;
-	    }
+	 }
+	
+	@Override
+	public void removeInterval(Long id) {
+		intervalRepository.removeInterval(id);
+	}
 	 
-	 public Optional<Interval> find(Long id) {
-	        return intervalRepository.getInterval(id);
-	    }
+	@Override
+	public Optional<Interval> getInterval(Long id) {
+		return intervalRepository.getInterval(id);
+	}
 	 
-	 public List<Interval> getAll() {
-	       
-	        return intervalRepository.getAllIntervals();
-	    } 
-	 private static List<Interval> defaultIntervals() {
-		    return List.of(
-		      new SimpleInterval(1L, "24/06/2014 08:22:07", "28/12/2016 12:10:14")
-		    );
-		  }
+	@Override
+	public List<Interval> getAllIntervals() {
+		return intervalRepository.getAllIntervals();
+	} 
+	
+	/**
+	 * Creates default data. Used only for testing reasons.
+	 * 
+	 * @return list of new created interval objects
+	 */
+	private static List<Interval> defaultIntervals() {
+		return List.of( new SimpleInterval(1L, "24/06/2014 08:22:07", "28/12/2016 12:10:14"));
+	}
 	 
-	 public List<EnhancedInterval> calculate(List<SimpleInterval> toBeCalculated){
+	@Override
+	public List<EnhancedInterval> calculate(List<SimpleInterval> toBeCalculated){
+		 
 		 List<EnhancedInterval> result = new ArrayList<>();
 		
-			EnhancedInterval interval_=null;
+	     EnhancedInterval enhancedInterval=null;
+	     //for simplifying the logic, supposed that intervals are ordered ascending
 		 for(int i=0; i<toBeCalculated.size();i++) {
 			 Interval interval = toBeCalculated.get(i);
-			 String duration = findDifference(interval.getStart(), interval.getEnd());
+			//for the all intervals, calculate duration between start and end date
+			 String duration = calculateDuration(interval.getStart(), interval.getEnd());
 			 if(i==0) {
-				 interval_ = new EnhancedInterval(interval.getId(), interval.getStart(), interval.getEnd(), duration);
+				 enhancedInterval = new EnhancedInterval(
+						 interval.getId(), 
+						 interval.getStart(), 
+						 interval.getEnd(), 
+						 duration);
 			 }
 			 else {
-				String breakDuration = findDifference(interval.getEnd(), toBeCalculated.get(i-1).getStart());
-				 interval_ = new EnhancedWithBreakInterval(interval.getId(), interval.getStart(), interval.getEnd(), duration, breakDuration);
+				//for the rest of the intervals, calculate break duration between end date
+				 //of the previous interval and start date of the current one
+				String breakDuration = calculateDuration(toBeCalculated.get(i-1).getEnd(), interval.getStart());
+				enhancedInterval = new EnhancedWithBreakInterval(
+						interval.getId(), 
+						interval.getStart(), 
+						interval.getEnd(), 
+						duration, 
+						breakDuration);
 			 }
 			
-			 result.add(interval_);
+			 result.add(enhancedInterval);
 		 }
 		 return result;
 		
 	 }
 	 
-	 private String findDifference(String startDate, String endDate) {
-		 StringBuilder sb1 = new StringBuilder("");
+	/**
+	 * Calculates duration between a given start and end date.
+	 * 
+	 * @param startDate 
+	 * @param endDate
+	 * @return a string representing duration expressed in years, days, hours, minutes and seconds
+	 */
+	 private String calculateDuration(String startDate, String endDate) {
+		 StringBuilder duration = new StringBuilder("");
 	        try {
 	  
-	            // parse method is used to parse
-	            // the text from a string to
-	            // produce the date
-	            Date d1 = sdf.parse(startDate);
-	            Date d2 = sdf.parse(endDate);
+	            Date d1 = dateFormat.parse(startDate);
+	            Date d2 = dateFormat.parse(endDate);
 	  
-	            // Calucalte time difference
+	            // Calcualte time difference
 	            // in milliseconds
 	            long difference_In_Time
 	                = d2.getTime() - d1.getTime();
 	  
-	            // Calucalte time difference in seconds,
-	            // minutes, hours, years, and days
 	            long difference_In_Seconds
 	                = TimeUnit.MILLISECONDS
 	                      .toSeconds(difference_In_Time)
@@ -125,26 +151,7 @@ public class IntervalServiceImpl implements IntervalService{
 	                      .toDays(difference_In_Time)
 	                  / 365l;
 	  
-	            // Print the date difference in
-	            // years, in days, in hours, in
-	            // minutes, and in seconds
-	            System.out.print(
-	                "Difference"
-	                + " between two dates is: ");
-	  
-	            // Print result
-	            System.out.println(
-	                difference_In_Years
-	                + " years, "
-	                + difference_In_Days
-	                + " days, "
-	                + difference_In_Hours
-	                + " hours, "
-	                + difference_In_Minutes
-	                + " minutes, "
-	                + difference_In_Seconds
-	                + " seconds");
-	            sb1.append(difference_In_Years)
+	    duration.append(difference_In_Years)
 	            .append(" years, ")
 	            .append(difference_In_Days)
 	            .append(" days, ")
@@ -158,12 +165,9 @@ public class IntervalServiceImpl implements IntervalService{
 	        catch (ParseException e) {
 	            e.printStackTrace();
 	        }
-			return sb1.toString(); 
+			return duration.toString(); 
 	 }
 
 
-	public void deleteById(long id) {
-		intervalRepository.removeInterval(id);
-		
-	}
+	
 }
