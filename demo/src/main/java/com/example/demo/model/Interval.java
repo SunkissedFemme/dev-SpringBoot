@@ -1,4 +1,4 @@
-package model;
+package com.example.demo.model;
 
 /*Base class for creating an interval. */
 

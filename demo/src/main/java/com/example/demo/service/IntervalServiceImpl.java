@@ -1,4 +1,4 @@
-package service;
+package com.example.demo.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,23 +8,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import model.EnhancedInterval;
-import model.EnhancedWithBreakInterval;
-import model.Interval;
-import model.SimpleInterval;
-import repository.IntervalRepository;
+import com.example.demo.model.EnhancedInterval;
+import com.example.demo.model.EnhancedWithBreakInterval;
+import com.example.demo.model.Interval;
+import com.example.demo.model.SimpleInterval;
+import com.example.demo.model.SimpleIntervalDMO;
+import com.example.demo.repository.MyIntervalRepository;
 
 @Service
 public class IntervalServiceImpl implements IntervalService{
 	
-	private  IntervalRepository intervalRepository;
+	@Autowired
+	private MyIntervalRepository intervalRepository;
 	private  SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	//private  IntervalRepository intervalRepository;
+	
 	
 	public IntervalServiceImpl() {
-		intervalRepository = new IntervalRepository();
+		//intervalRepository = new IntervalRepository();
 		
 		//adds default data
 		//intervalRepository.addInterval(defaultIntervals().get(0));
@@ -32,30 +36,32 @@ public class IntervalServiceImpl implements IntervalService{
 
 	
 	@Override
-	 public Interval create(SimpleInterval interval) {
-		 Interval copy = new SimpleInterval(
+	 public SimpleIntervalDMO create(SimpleIntervalDMO interval) {
+		 SimpleIntervalDMO copy = new SimpleIntervalDMO(
 	                interval.getId(),
 	                interval.getStart(),
 	                interval.getEnd());
 	        
-	        intervalRepository.addInterval(copy);
+	        intervalRepository.save(copy);
 	        
 	        return copy;
 	 }
 	
 	@Override
 	public void removeInterval(Long id) {
-		intervalRepository.removeInterval(id);
+		intervalRepository.deleteById(id);
 	}
 	 
 	@Override
-	public Optional<Interval> getInterval(Long id) {
-		return intervalRepository.getInterval(id);
+	public Optional<SimpleIntervalDMO> getInterval(Long id) {
+		return intervalRepository.findById(id);
 	}
 	 
 	@Override
-	public List<Interval> getAllIntervals() {
-		return intervalRepository.getAllIntervals();
+	public List<SimpleIntervalDMO> getAllIntervals() {
+		List<SimpleIntervalDMO> allIntervals = new ArrayList<>();
+		intervalRepository.findAll().forEach(allIntervals::add);
+		return allIntervals;
 	} 
 	
 	/**

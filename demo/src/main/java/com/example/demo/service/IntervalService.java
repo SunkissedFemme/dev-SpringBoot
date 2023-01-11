@@ -1,11 +1,11 @@
-package service;
+package com.example.demo.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import model.EnhancedInterval;
-import model.Interval;
-import model.SimpleInterval;
+import com.example.demo.model.EnhancedInterval;
+import com.example.demo.model.SimpleInterval;
+import com.example.demo.model.SimpleIntervalDMO;
 
 /* Interface for defining actions with interval objects. */
 public interface IntervalService {
@@ -16,7 +16,7 @@ public interface IntervalService {
 	 * @param interval simple interval object
 	 * @return created interval
 	 */
-	Interval create(SimpleInterval interval);
+	SimpleIntervalDMO create(SimpleIntervalDMO interval);
 
 	/**
 	 * Removes from database the interval with the given id.
@@ -31,14 +31,14 @@ public interface IntervalService {
 	 * @param id interval id
 	 * @return interval
 	 */
-	Optional<Interval> getInterval(Long id);
+	Optional<SimpleIntervalDMO> getInterval(Long id);
 	
 	/**
 	 * Retrieve from database all interval objects.
 	 *
 	 * @return list with interval objects; may be empty if no intervals were created
 	 */
-	List<Interval> getAllIntervals();
+	List<SimpleIntervalDMO> getAllIntervals();
 	
 	/**
 	 * Performs a set of operations of a list of interval objects.

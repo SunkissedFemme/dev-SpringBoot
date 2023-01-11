@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import model.EnhancedInterval;
-import model.Interval;
-import model.SimpleInterval;
-import model.WrapperEnhancedIntervals;
-import model.WrapperIntervals;
-import service.IntervalServiceImpl;
+import com.example.demo.model.EnhancedInterval;
+import com.example.demo.model.SimpleInterval;
+import com.example.demo.model.SimpleIntervalDMO;
+import com.example.demo.model.WrapperEnhancedIntervals;
+import com.example.demo.model.WrapperIntervals;
+import com.example.demo.service.IntervalService;
+import com.example.demo.service.IntervalServiceImpl;
 
 @RestController
-@ComponentScan("com.example.demo")
 @RequestMapping("api/intervals")
 public class IntervalController {
 
-	private final IntervalServiceImpl intervalService;
+	@Autowired
+	private IntervalService intervalService;
 	
-	public IntervalController() {
-		this.intervalService = new IntervalServiceImpl();
-	}
 	
 	/**
 	 * Adds an interval to database.
@@ -41,8 +40,8 @@ public class IntervalController {
 	 * @return ResponseEntity<Interval>
 	 */
     @PostMapping
-    public ResponseEntity<Interval> create(@RequestBody SimpleInterval interval) {
-        Interval created = intervalService.create((SimpleInterval) interval);
+    public ResponseEntity<SimpleIntervalDMO> create(@RequestBody SimpleIntervalDMO interval) {
+        SimpleIntervalDMO created = intervalService.create(interval);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(created.getId())
@@ -73,8 +72,8 @@ public class IntervalController {
      * @return ResponseEntity<Interval>
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Interval> getInterval(@PathVariable("id") Long id) {
-        Optional<Interval> interval = intervalService.getInterval(id);
+    public ResponseEntity<SimpleIntervalDMO> getInterval(@PathVariable("id") Long id) {
+        Optional<SimpleIntervalDMO> interval = intervalService.getInterval(id);
         if (interval.isPresent()) {
             return new ResponseEntity<>(interval.get(), HttpStatus.OK);
           } else {
@@ -88,8 +87,8 @@ public class IntervalController {
      * @return a list containing simple interval objects which wee created
      */
     @GetMapping
-    public ResponseEntity<List<Interval>> getAllIntervals() {
-        List<Interval> items = intervalService.getAllIntervals();
+    public ResponseEntity<List<SimpleIntervalDMO>> getAllIntervals() {
+        List<SimpleIntervalDMO> items = intervalService.getAllIntervals();
         return ResponseEntity.ok().body(items);
     }
 

@@ -1,4 +1,4 @@
-package model;
+package com.example.demo.model;
 
 /* Encapsulates data about an interval with following attributes: id, start and end and duration. */
 public class EnhancedInterval extends SimpleInterval {

@@ -1,4 +1,6 @@
-package model;
+package com.example.demo.model;
+
+import javax.persistence.Entity;
 
 /* Encapsulates data about an interval with following attributes: id, start and end. */
 public class SimpleInterval extends Interval{
