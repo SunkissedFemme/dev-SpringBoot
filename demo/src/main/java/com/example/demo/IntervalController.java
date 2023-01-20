@@ -26,7 +26,7 @@ import com.example.demo.service.IntervalService;
 import com.example.demo.service.IntervalServiceImpl;
 
 @RestController
-@RequestMapping("api/intervals")
+//@RequestMapping("api/intervals")
 public class IntervalController {
 
 	@Autowired
@@ -55,7 +55,7 @@ public class IntervalController {
      * @param id interval id
      * @return ResponseEntity<HttpStatus>
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("api/intervals/{id}")
     public ResponseEntity<HttpStatus> removeInterval(@PathVariable("id") Long id) {
       try {
         intervalService.removeInterval(id);
@@ -86,7 +86,7 @@ public class IntervalController {
      * 
      * @return a list containing simple interval objects which wee created
      */
-    @GetMapping
+    @GetMapping("/intervals")
     public ResponseEntity<List<SimpleIntervalDMO>> getAllIntervals() {
         List<SimpleIntervalDMO> items = intervalService.getAllIntervals();
         return ResponseEntity.ok().body(items);
